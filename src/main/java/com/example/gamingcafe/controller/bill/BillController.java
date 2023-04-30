@@ -38,8 +38,6 @@ public class BillController {
     @Autowired
     private GamerBillRepo gamerBillRepo;
 
-    private static final ch.qos.logback.classic.Logger log= (Logger) LoggerFactory.getLogger(BillController.class);
-
     @PostMapping("/add/bill")
     public String savebill(@RequestHeader("Authorization") String token, @RequestBody List<BillUser> ls) throws Exception{
         try{
@@ -56,10 +54,8 @@ public class BillController {
                 xyz.add(d);
             }
             billUserRepo.saveAll(xyz);
-            log.info("Added Bill Items");
             return "Added bill items";
         }catch (Exception e){
-            log.error("Error Occurred");
             throw e;
         }
     }
@@ -72,10 +68,8 @@ public class BillController {
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=0) throw new Exception("Not Admin");
             List<GamerBill> g=gamerBillRepo.xyzfalana(id);
-            log.info("Got Bill Details");
             return g.size()+1;
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }
@@ -87,14 +81,11 @@ public class BillController {
             String uname=jwtUtil.extractUsername(token);
             Creds c=credsRepo.findByUsername(uname);
             if((c.getRole()==0) || (c.getId()==gid)) {
-                log.info("Get Bill Items Success");
                 return gamerBillRepo.findAllByGamerid(gid);
             }else {
-                log.error("Unauthorized");
                 throw new Exception("Unauthorized");
             }
         }catch (Exception e){
-            log.error("error");
             throw new Exception("Something went wrong");
         }
     }
@@ -113,15 +104,12 @@ public class BillController {
                     CustomObj c1= new CustomObj(gameDetailsRepo.findByGid(a.getGameid()).getGamename(),categoryRepo.findByCid(gameDetailsRepo.findByGid(a.getGameid()).getCid()).getCtype(),a.getHours(),gameDetailsRepo.findByGid(a.getGameid()).getCost(),a.getTotal());
                     ret.add(c1);
                 }
-                log.info("Get Bill Items Success");
                 return  ret;
             }
             else {
-                log.error("Error");
                 throw  new Exception("Unauthorized");
             }
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }

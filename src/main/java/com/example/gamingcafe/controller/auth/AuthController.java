@@ -19,7 +19,6 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private static final ch.qos.logback.classic.Logger log= (Logger) LoggerFactory.getLogger(AuthController.class);
     @Autowired
     private CredsRepo credsRepo;
     @Autowired
@@ -47,11 +46,9 @@ public class AuthController {
             Creds d=credsRepo.findById(gid);
             d.setVerified(1);
             credsRepo.save(d);
-            log.info("Gamer Approved");
             return "Approved user "+d.getUsername();
 //            return "Verified user "+d.getUsername();
         }catch (Exception e){
-            log.error("Error Occurred");
             throw e;
         }
     }
@@ -62,7 +59,6 @@ public class AuthController {
         String uname=jwtUtil.extractUsername(token);
         Creds c=credsRepo.findByUsername(uname);
         if(c.getRole() != 1 ) throw new Exception("Not GAMER");
-        log.info("Fetched Gamer id from token");
         return c.getId();
     }
     @PostMapping("/bann/gamer/{gid}")
@@ -75,10 +71,8 @@ public class AuthController {
             Creds d=credsRepo.findById(gid);
             d.setVerified(0);
             credsRepo.save(d);
-            log.info("Gamer Banned");
             return "Banned user "+d.getUsername();
         }catch (Exception e){
-            log.error("Error Occurred");
             throw e;
         }
     }
@@ -95,10 +89,8 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(),authRequest.getPassword())
             );
         }catch (Exception ex){
-            log.error("Error Occurred");
             throw new Exception("Invalid Username/Password");
         }
-        log.info("Gamer Logged in");
         return jwtUtil.generateToken(authRequest.getUsername());
     }
 
@@ -106,11 +98,9 @@ public class AuthController {
     public Integer newReg(@RequestBody Creds registerRequest) throws Exception{
         try{
             Creds ct = credsRepo.save(registerRequest);
-            log.info("Gamer Registered");
             return ct.getId();
         }catch (Exception ex){
 //            System.out.println(ex);
-            log.error("Login Error");
             throw new Exception(ex);
         }
 
@@ -119,7 +109,6 @@ public class AuthController {
     @PostMapping("/admin/authenticate")
     public ResponseEntity<String> generateTokenforAdmin(@RequestBody AuthRequest authRequest) throws Exception{
         if(authRequest.getRole() != credsRepo.findByUsername(authRequest.getUsername()).getRole() ) {
-            log.error("Unauthorized Login");
             return new ResponseEntity<>(
                     "Bad Credentials",
                     HttpStatus.BAD_REQUEST);
@@ -130,12 +119,10 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(),authRequest.getPassword())
             );
         }catch (Exception ex){
-            log.error("Invalid Creds Entered");
             throw new Exception("Invalid Username/Password");
         }
         String xyz=jwtUtil.generateToken(authRequest.getUsername());
         System.out.println(xyz + "  is tje generated token");
-        log.info("Admin Logged In");
         return new ResponseEntity<>(
                 xyz,
                 HttpStatus.OK);
@@ -148,10 +135,8 @@ public class AuthController {
             String uname=jwtUtil.extractUsername(token);
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=1) throw new Exception("Not Gamer");
-            log.info("Get User Details Success");
             return  c.getId();
         }catch (Exception e){
-            log.error("Error Occurred");
             throw e;
         }
     }

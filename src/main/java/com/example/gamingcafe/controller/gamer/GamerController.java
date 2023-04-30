@@ -28,16 +28,13 @@ public class GamerController {
 
     @Autowired
     private CredsRepo credsRepo;
-    private static final ch.qos.logback.classic.Logger log= (Logger) LoggerFactory.getLogger(GamerController.class);
 
     @PostMapping("/gamer/save")
     public String savegamerdetails(@RequestBody GamerDetails gamerDetails) throws Exception{
         try{
             gamerDetailsRepo.save(gamerDetails);
-            log.info("Gamer Details Added");
             return "Gamer Details Added";
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }
@@ -49,10 +46,8 @@ public class GamerController {
             String uname=jwtUtil.extractUsername(token);
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=0) throw new Exception("Not Admin");
-            log.info("Gamer Details Get Successfully");
             return gamerDetailsRepo.findByGid(id);
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }
@@ -65,10 +60,8 @@ public class GamerController {
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=0) throw new Exception("Not Admin");
             Creds at=credsRepo.findById(id);
-            log.info("Active List Sent Successfully");
             return new ReturnObj(at.getId(), at.getVerified(), at.getUsername(), at.getEmail());
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }
@@ -89,10 +82,8 @@ public class GamerController {
                     temp.add(r);
                 }
             }
-            log.info("Gamer List Sent Successfully");
             return temp;
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }
@@ -114,10 +105,8 @@ public class GamerController {
                     temp.add(r);
                 }
             }
-            log.info("Active List Sent Successfully");
             return temp;
         }catch (Exception e){
-            log.error("Error");
             throw e;
         }
     }
