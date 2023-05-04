@@ -1,5 +1,6 @@
 # Use the OpenJDK 11 image as the base image
-FROM openjdk:11-jdk
+#FROM openjdk:11-jdk --platform linux/arm64/v8
+FROM --platform=linux/amd64 openjdk:11-jdk
 
 # Set the working directory in the container
 WORKDIR /app
