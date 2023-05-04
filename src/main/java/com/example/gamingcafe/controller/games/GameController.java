@@ -33,6 +33,8 @@ public class GameController {
     @Autowired
     private CredsRepo credsRepo;
 
+    private static final ch.qos.logback.classic.Logger log= (Logger) LoggerFactory.getLogger(GamerController.class);
+
 
     @PostMapping("/cat/add")
     public Category addcat(@RequestHeader("Authorization") String token, @RequestBody Category category) throws Exception{
@@ -41,8 +43,10 @@ public class GameController {
             String uname=jwtUtil.extractUsername(token);
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=0) throw new Exception("Not Admin");
+            log.info("Added Category Success");
             return categoryRepo.save(category);
         }catch (Exception e){
+            log.error("Error");
             throw e;
         }
     }
@@ -54,8 +58,10 @@ public class GameController {
             String uname=jwtUtil.extractUsername(token);
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=0) throw new Exception("Not Admin");
+            log.info("Get All Category Success");
             return  categoryRepo.findAll();
         }catch (Exception e){
+            log.error("Error");
             throw e;
         }
     }
@@ -69,6 +75,7 @@ public class GameController {
             String cat=categoryRepo.findByCid(a.getCid()).getCtype();
             t.add(new ReturnGameObj(a.getGid(),a.getCost(),cat,a.getGamename()));
         }
+        log.info("Get All Games Success");
         return t;
     }
 
@@ -82,6 +89,7 @@ public class GameController {
             if(a.getCid()==id)
                 t.add(new ReturnGameObj(a.getGid(),a.getCost(),cat,a.getGamename()));
         }
+        log.info("Get All Game Category Success");
         return t;
     }
 
@@ -93,8 +101,10 @@ public class GameController {
             Creds c=credsRepo.findByUsername(uname);
             if(c.getRole()!=0) throw new Exception("Not Admin");
             if(categoryRepo.findByCid(gameDetails.getCid())==null) throw new Exception("No Category Found");
+            log.info("Added Game Success");
             return gameDetailsRepo.save(gameDetails);
         }catch (Exception e){
+            log.error("Error");
             throw e;
         }
     }
@@ -112,8 +122,10 @@ public class GameController {
                 ReturnGameObj r=new ReturnGameObj(g.getGid(),g.getCost(),cate,g.getGamename());
                 t.add(r);
             }
+            log.info("Fetch Games by Category Success");
             return t;
         }catch (Exception e){
+            log.error("Error");
             throw e;
         }
     }
